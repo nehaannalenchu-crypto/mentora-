@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ tutor.display_name }}{% endblock %}
+{% block content %}
+<section class="detail-page wrap">
+  <a class="back-link" href="{{ url_for('tutor_matches') }}">← Back to recommendations</a>
+  <div class="detail-layout">
+    <article class="detail-main">
+      <div class="detail-hero"><div class="tutor-photo detail-photo">{% if tutor.photo_url %}<img src="{{ tutor.photo_url }}" alt="Profile photo of {{ tutor.display_name }}">{% else %}<span>{{ tutor.display_name[:1]|upper }}</span>{% endif %}</div><div><div class="verified-line"><span class="verified-check">✓</span> VERIFIED TUTOR PROFILE</div><h1>{{ tutor.display_name }}</h1><p class="tutor-subjects">{{ tutor.subjects|join(' · ') }}</p><p class="rating-row">{% if tutor.rating %}<span class="stars">★</span> {{ '%.1f'|format(tutor.rating) }} · {{ tutor.review_count }} reviews{% else %}New on Mentora{% endif %}</p></div></div>
+      <div class="detail-facts"><div><small>QUALIFICATION</small><strong>{{ tutor.qualification }}</strong></div><div><small>LEVELS</small><strong>{{ tutor.grades|join(', ') }}</strong></div><div><small>LANGUAGES</small><strong>{{ (tutor.languages + ([tutor.language_other] if tutor.language_other else []))|join(', ') }}</strong></div><div><small>RATE</small><strong>MUR {{ '%.0f'|format(tutor.hourly_rate) }} / hour</strong></div></div>
+      <section class="detail-section"><h2>About this teacher</h2><p>{{ tutor.bio or 'This teacher has not added a bio yet.' }}</p></section>
+      <section class="detail-section"><h2>Teaching approach</h2><p>{{ tutor.teaching_style or 'Teaching approach not specified.' }}</p><div class="tag-row">{% for item in tutor.delivery_modes %}<span>{{ item }}</span>{% endfor %}{% for item in tutor.formats %}<span>{{ item }}</span>{% endfor %}</div></section>
+      <section class="detail-section"><h2>Availability</h2><div class="slot-row">{% for slot in tutor.availability %}<span>{{ slot }}</span>{% endfor %}</div></section>
+    </article>
+    <aside class="book-panel"><p class="eyebrow">BOOK WITH {{ tutor.display_name.split()[0]|upper }}</p><h2>Choose a class</h2>
+      <form action="{{ url_for('create_booking') }}" method="post" class="stack-form">
+        <input type="hidden" name="teacher_id" value="{{ tutor.id }}">
+        {% if tutor.offers_demo %}<label class="booking-choice"><input type="radio" name="session_type" value="demo" checked><span><b>Demo class · {% if tutor.demo_price|float == 0 %}Free{% else %}MUR {{ '%.0f'|format(tutor.demo_price) }}{% endif %}</b><small>{{ tutor.demo_minutes }} minutes</small></span></label>{% endif %}
+        <label class="booking-choice"><input type="radio" name="session_type" value="regular" {% if not tutor.offers_demo %}checked{% endif %}><span><b>Regular lesson · MUR {{ '%.0f'|format(tutor.hourly_rate) }} / hour</b><small>Choose 30, 45, 60, or 90 minutes</small></span></label>
+        <label for="session_date">Preferred date</label><input class="form-control" id="session_date" type="date" name="session_date" min="{{ today }}" required>
+        <label for="time_slot">Available time</label><select class="form-select" id="time_slot" name="time_slot" required>{% for slot in tutor.availability %}<option>{{ slot }}</option>{% endfor %}</select>
+        <label for="duration_minutes">Regular lesson duration</label><select class="form-select" id="duration_minutes" name="duration_minutes"><option value="30">30 minutes</option><option value="45">45 minutes</option><option value="60" selected>60 minutes</option><option value="90">90 minutes</option></select>
+        <p class="small-note">After sending a request, you can message the teacher here in Mentora. Payment is only due after the teacher accepts a paid class.</p>
+        <button class="button button-primary button-block" type="submit">Request this class <span>→</span></button>
+      </form>
+      <form action="{{ url_for('report_tutor', teacher_id=tutor.id) }}" method="post" class="report-form"><label for="reason">Report a profile</label><input class="form-control" id="reason" name="reason" placeholder="Reason for report"><button class="text-button" type="submit">Send report</button></form>
+    </aside>
+  </div>
+</section>
+{% endblock %}

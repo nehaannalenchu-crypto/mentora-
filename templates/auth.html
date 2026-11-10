@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Join Mentora{% endblock %}
+{% block content %}
+<section class="auth-page wrap" id="sign-in">
+  <div class="auth-promo">
+    <p class="eyebrow"><span>✳</span> PERSONALIZED ONLINE TUTORING</p>
+    <h1>Learn from the right tutor,<br><em>your way.</em></h1>
+    <p class="lead">Find support that fits your subjects, schedule, budget, and goals.</p>
+    <div class="benefit-row"><span>▣ <b>1-on-1 or group classes</b></span><span>▦ <b>Flexible scheduling</b></span><span>✓ <b>Reviewed tutor profiles</b></span></div>
+    <div class="promo-art" aria-label="Illustration of online tutoring"><div class="art-sun"></div><div class="art-student"><i></i><b></b></div><div class="art-laptop"></div><div class="art-book"></div><span class="art-note">BOOK YOUR<br>FIRST CLASS</span></div>
+  </div>
+  <section class="auth-card" aria-labelledby="auth-title">
+    <div class="auth-card-icon">M</div>
+    {% if pending_email %}
+      <p class="eyebrow">EMAIL VERIFICATION</p>
+      <h2 id="auth-title">Check your inbox</h2>
+      <p class="muted">Enter the one-time code for <strong>{{ pending_email }}</strong>. It expires in 10 minutes.</p>
+      {% if demo_code %}<div class="demo-code"><span>LOCAL DEMO CODE</span><strong>{{ demo_code }}</strong><small>No email was sent. This code is for the local demo only.</small></div>{% endif %}
+      <form action="{{ url_for('auth_verify') }}" method="post" class="stack-form">
+        <label for="otp">One-time code</label><input id="otp" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit code" required>
+        <button class="button button-primary button-block" type="submit">Verify and continue <span>→</span></button>
+      </form>
+      <form action="{{ url_for('auth_resend') }}" method="post" class="resend-form"><button class="text-button" type="submit">Send a new code</button></form>
+      <a class="text-button" href="{{ url_for('logout') }}">Use a different email</a>
+    {% else %}
+      <p class="eyebrow">WELCOME TO MENTORA</p>
+      <h2 id="auth-title">Create your account</h2>
+      <p class="muted">Choose how you’ll use Mentora. We’ll verify your email with a one-time code.</p>
+      <form action="{{ url_for('auth_start') }}" method="post" class="stack-form">
+        <fieldset class="role-picker"><legend>I am joining as a</legend>
+          <label><input type="radio" name="role" value="student" {% if suggested_role != 'teacher' %}checked{% endif %}><span><b>Student</b><small>Find a tutor</small></span></label>
+          <label><input type="radio" name="role" value="teacher" {% if suggested_role == 'teacher' %}checked{% endif %}><span><b>Teacher</b><small>Offer tutoring</small></span></label>
+        </fieldset>
+        <label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        <button class="button button-primary button-block" type="submit">Send one-time code <span>→</span></button>
+      </form>
+      <div class="auth-divider"><span>Already have an account?</span></div>
+      <a class="button button-outline button-block" href="#sign-in">Sign in with email</a>
+      <p class="small-note">By continuing, you agree to use Mentora respectfully. A profile is visible to other members only after you complete it.</p>
+    {% endif %}
+  </section>
+</section>
+<section class="auth-trust wrap"><span>01 <b>Personalized matches</b></span><span>02 <b>Chat and book in one place</b></span><span>03 <b>Demo classes available</b></span></section>
+{% endblock %}

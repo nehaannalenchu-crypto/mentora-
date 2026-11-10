@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}How it works{% endblock %}
+{% block content %}
+<section class="about-page wrap">
+  <p class="eyebrow">ABOUT THE PROJECT</p>
+  <h1>Matching that’s<br><em>easy to explain.</em></h1>
+  <p class="hero-intro">Mentora is a student project exploring whether profile preferences and feedback can help students compare peer tutors.</p>
+  <div class="about-grid">
+    <article><span class="about-number">01</span><h2>Eligibility first</h2><p>The prototype filters tutors by subject. It then ranks eligible profiles using schedule overlap, language and teaching-style preferences.</p></article>
+    <article><span class="about-number">02</span><h2>Model, when trained</h2><p>The planned logistic regression model learns from labeled student–tutor pair ratings. Until there is suitable survey data, the site uses a clearly labeled rule-based baseline.</p></article>
+    <article><span class="about-number">03</span><h2>Feedback with care</h2><p>Feedback is stored with a random browser identifier, not a name or student number. Ratings of 1–2 become negative labels, 4–5 positive labels, and 3 stays neutral.</p></article>
+  </div>
+  <div class="method-note"><strong>What a score means</strong><p>A higher score means the profile fits more of the selected features or, once trained, receives a higher model score. It does not prove that a tutoring session will succeed.</p></div>
+</section>
+{% endblock %}

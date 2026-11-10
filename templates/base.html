@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#132443">
+  <title>{% block title %}Mentora{% endblock %} · Study better together</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('home') }}" aria-label="Mentora home"><span class="brand-symbol">M</span><span>Mentora<span class="orange">.</span><small>ONLINE TUTORING</small></span></a>
+    <nav class="top-nav" aria-label="Main navigation">
+      {% if current_user %}
+        <a href="{{ url_for('home', role='teacher') }}">Become a Tutor</a>
+        <a href="{{ url_for('about') }}">About Us</a>
+        {% if current_user.role == 'student' %}<a href="{{ url_for('tutor_matches') }}">Find Tutors</a>{% endif %}
+        {% if current_user.role == 'teacher' %}<a href="{{ url_for('dashboard') }}">Bookings</a>{% endif %}
+        {% if current_user.role == 'admin' %}<a href="{{ url_for('admin_dashboard') }}">Admin</a>{% endif %}
+        <a class="nav-pill" href="{{ url_for('dashboard') }}">Dashboard{% if notification_count %}<span class="notification-count">{{ notification_count }}</span>{% endif %}</a>
+        <a class="nav-signout" href="{{ url_for('logout') }}">Sign Out</a>
+      {% else %}
+        <a href="{{ url_for('home', role='teacher') }}">Become a Tutor</a>
+        <a href="{{ url_for('about') }}">About Us</a>
+        <a class="nav-pill" href="{{ url_for('home') }}#sign-in">Sign In</a>
+        <a class="nav-account" href="{{ url_for('home') }}#sign-in">Find My Account</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="flash-list" role="status">{% for category, message in messages %}<p class="flash flash-{{ category }}">{{ message }}</p>{% endfor %}</div>{% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer"><a href="{{ url_for('home') }}">Mentora<span class="orange">.</span></a><span>Study better together.</span><span>{% if demo_mode %}Local demonstration · No real email or payment is sent{% else %}Student tutoring marketplace prototype{% endif %}</span></footer>
+</body>
+</html>

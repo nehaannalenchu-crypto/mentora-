@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<section class="checkout-page wrap">
+  <a class="back-link" href="{{ url_for('conversation', booking_id=booking.id) }}">← Back to Mentora chat</a>
+  <div class="checkout-layout"><div class="checkout-intro"><p class="eyebrow">SECURE BOOKING STEP</p><h1>Confirm your <em>class.</em></h1><p>Payment is requested after your tutor accepts the booking. For this prototype, checkout is simulated and no real payment is collected.</p><div class="checkout-lock">▣ <span><strong>No card details needed here</strong><small>Connect a payment provider before accepting real payments.</small></span></div></div>
+    <section class="checkout-summary"><p class="eyebrow">ORDER SUMMARY</p><h2>{{ booking.session_type|title }} class</h2><div class="checkout-lines"><div><span>Tutor</span><strong>{{ booking.teacher_name }}</strong></div><div><span>Date and time</span><strong>{{ booking.session_date }} · {{ booking.time_slot }}</strong></div><div><span>Duration</span><strong>{{ booking.duration_minutes }} minutes</strong></div><div class="total-line"><span>Total due</span><strong>MUR {{ '%.0f'|format(booking.amount) }}</strong></div></div><form method="post"><button class="button button-primary button-block" type="submit">Complete demo checkout <span>→</span></button></form><p class="small-note">Clicking this button changes the booking to confirmed for demonstration only.</p></section>
+  </div>
+</section>
+{% endblock %}

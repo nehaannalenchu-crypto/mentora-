@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Mentora chat{% endblock %}
+{% block content %}
+<section class="conversation-page wrap">
+  <a class="back-link" href="{{ url_for('dashboard') }}">← Back to dashboard</a>
+  <div class="conversation-layout">
+    <section class="chat-panel"><div class="chat-header"><div class="mini-avatar">{{ (booking.teacher_name if current_user.role == 'student' else booking.student_name)[:1]|upper }}</div><div><strong>{{ booking.teacher_name if current_user.role == 'student' else booking.student_name }}</strong><small>Mentora conversation · keep class arrangements here</small></div><span class="status status-{{ booking.status|replace('_','-') }}">{{ booking.status|replace('_',' ')|title }}</span></div>
+      <div class="chat-messages">{% if messages %}{% for message in messages %}<article class="chat-message {% if message.sender_id == current_user.id %}mine{% endif %}"><small>{{ 'You' if message.sender_id == current_user.id else ('Teacher' if message.role == 'teacher' else 'Student') }} · {{ message.created_at[:16]|replace('T',' ') }}</small>{% if message.kind == 'video_link' %}<a href="{{ message.body }}" target="_blank" rel="noopener">Join video session ↗</a>{% else %}<p>{{ message.body }}</p>{% endif %}</article>{% endfor %}{% else %}<div class="chat-empty"><span>✉</span><p>Start a conversation about the class time, demo, or learning goals.</p></div>{% endif %}</div>
+      <form action="{{ url_for('send_message', booking_id=booking.id) }}" method="post" class="compose-form"><textarea name="body" rows="2" maxlength="2000" placeholder="Write a message…{% if current_user.role == 'teacher' %} You can paste a video-call link here.{% endif %}" required></textarea><button class="button button-primary" type="submit">Send <span>→</span></button><small>Messages and video links stay in Mentora.</small></form>
+    </section>
+    <aside class="booking-side"><p class="eyebrow">BOOKING DETAILS</p><h2>{{ booking.session_type|title }} class</h2><div class="booking-detail-list"><div><small>Teacher</small><strong>{{ booking.teacher_name }}</strong></div><div><small>Date</small><strong>{{ booking.session_date }}</strong></div><div><small>Time</small><strong>{{ booking.time_slot }}</strong></div><div><small>Length</small><strong>{{ booking.duration_minutes }} minutes</strong></div><div><small>Booking status</small><strong>{{ booking.status|replace('_',' ')|title }}</strong></div><div><small>Payment</small><strong>{% if booking.amount %}MUR {{ '%.0f'|format(booking.amount) }} · {{ booking.payment_status|replace('_',' ') }}{% else %}Free · not required{% endif %}</strong></div></div>
+      {% if current_user.role == 'teacher' and booking.status == 'requested' %}<form action="{{ url_for('booking_action', booking_id=booking.id) }}" method="post" class="side-actions"><button class="button button-primary button-block" name="action" value="accept">Accept request</button><button class="button button-outline button-block" name="action" value="decline">Decline</button></form>{% endif %}
+      {% if current_user.role == 'student' and booking.status == 'awaiting_payment' %}<a class="button button-primary button-block" href="{{ url_for('checkout', booking_id=booking.id) }}">Continue to checkout</a>{% endif %}
+      {% if booking.amount %}<p class="small-note">Payment is due before the class. Local demo checkout records a test payment only; it does not charge money.</p>{% else %}<p class="small-note">This free demo class requires no payment.</p>{% endif %}
+    </aside>
+  </div>
+</section>
+{% endblock %}
