@@ -1,1 +1,338 @@
-[]
+[
+  {
+    "demo_slug": "ananya-menon",
+    "is_demo": true,
+    "display_name": "Ananya Menon",
+    "gender": "female",
+    "subjects": [
+      "Mathematics",
+      "Physics"
+    ],
+    "subject_other": "",
+    "grades": [
+      "School (K–12)",
+      "Undergraduate"
+    ],
+    "languages": [
+      "English",
+      "Malayalam",
+      "Hindi"
+    ],
+    "language_other": "",
+    "hourly_rate": 450,
+    "availability": [
+      "Monday evening",
+      "Wednesday evening",
+      "Saturday morning"
+    ],
+    "delivery_modes": [
+      "Online"
+    ],
+    "formats": [
+      "1-on-1",
+      "Group class"
+    ],
+    "teaching_style": "Step-by-step explanations",
+    "qualification": "M.Sc. Mathematics",
+    "certificate_details": "",
+    "experience_years": 4,
+    "bio": "Fictional demo profile. Build confidence with worked examples and short practice exercises.",
+    "photo_url": "",
+    "offers_demo": true,
+    "demo_price": 0,
+    "demo_minutes": 30
+  },
+  {
+    "demo_slug": "priya-naidoo",
+    "is_demo": true,
+    "display_name": "Priya Naidoo",
+    "gender": "female",
+    "subjects": [
+      "Mathematics"
+    ],
+    "subject_other": "",
+    "grades": [
+      "School (K–12)",
+      "Undergraduate"
+    ],
+    "languages": [
+      "English",
+      "French",
+      "Creole"
+    ],
+    "language_other": "",
+    "hourly_rate": 350,
+    "availability": [
+      "Monday evening",
+      "Friday afternoon"
+    ],
+    "delivery_modes": [
+      "Online"
+    ],
+    "formats": [
+      "1-on-1",
+      "Group class"
+    ],
+    "teaching_style": "Practice problems",
+    "qualification": "B.Sc. Mathematics",
+    "certificate_details": "",
+    "experience_years": 3,
+    "bio": "Fictional demo profile. Patient support for school mathematics, algebra, and exam preparation.",
+    "photo_url": "",
+    "offers_demo": true,
+    "demo_price": 0,
+    "demo_minutes": 30
+  },
+  {
+    "demo_slug": "kavya-rao",
+    "is_demo": true,
+    "display_name": "Kavya Rao",
+    "gender": "female",
+    "subjects": [
+      "Mathematics",
+      "Computer Science / Programming"
+    ],
+    "subject_other": "",
+    "grades": [
+      "School (K–12)",
+      "Undergraduate"
+    ],
+    "languages": [
+      "English",
+      "Telugu",
+      "Kannada"
+    ],
+    "language_other": "",
+    "hourly_rate": 600,
+    "availability": [
+      "Wednesday evening",
+      "Saturday afternoon"
+    ],
+    "delivery_modes": [
+      "Online"
+    ],
+    "formats": [
+      "1-on-1",
+      "Group class"
+    ],
+    "teaching_style": "Visual explanations",
+    "qualification": "B.Tech. Computer Science",
+    "certificate_details": "",
+    "experience_years": 5,
+    "bio": "Fictional demo profile. Connect abstract ideas to diagrams and practical programming examples.",
+    "photo_url": "",
+    "offers_demo": true,
+    "demo_price": 0,
+    "demo_minutes": 30
+  },
+  {
+    "demo_slug": "rohan-thomas",
+    "is_demo": true,
+    "display_name": "Rohan Thomas",
+    "gender": "male",
+    "subjects": [
+      "Mathematics",
+      "Computer Science / Programming"
+    ],
+    "subject_other": "",
+    "grades": [
+      "School (K–12)",
+      "Undergraduate"
+    ],
+    "languages": [
+      "English",
+      "Tamil",
+      "Malayalam"
+    ],
+    "language_other": "",
+    "hourly_rate": 500,
+    "availability": [
+      "Monday evening",
+      "Wednesday evening"
+    ],
+    "delivery_modes": [
+      "Online"
+    ],
+    "formats": [
+      "1-on-1",
+      "Group class"
+    ],
+    "teaching_style": "Step-by-step explanations",
+    "qualification": "B.Tech. Computer Science",
+    "certificate_details": "",
+    "experience_years": 2,
+    "bio": "Fictional demo profile. Hands-on lessons in mathematics, Python, and problem solving.",
+    "photo_url": "",
+    "offers_demo": true,
+    "demo_price": 0,
+    "demo_minutes": 30
+  },
+  {
+    "demo_slug": "elena-jacob",
+    "is_demo": true,
+    "display_name": "Elena Jacob",
+    "gender": "female",
+    "subjects": [
+      "Physics",
+      "Electronics"
+    ],
+    "subject_other": "",
+    "grades": [
+      "School (K–12)",
+      "Undergraduate"
+    ],
+    "languages": [
+      "English",
+      "French"
+    ],
+    "language_other": "",
+    "hourly_rate": 650,
+    "availability": [
+      "Tuesday afternoon",
+      "Thursday evening"
+    ],
+    "delivery_modes": [
+      "Online"
+    ],
+    "formats": [
+      "1-on-1",
+      "Group class"
+    ],
+    "teaching_style": "Visual explanations",
+    "qualification": "M.Eng. Electronics",
+    "certificate_details": "",
+    "experience_years": 6,
+    "bio": "Fictional demo profile. Learn circuits and physics through illustrations and guided exercises.",
+    "photo_url": "",
+    "offers_demo": true,
+    "demo_price": 0,
+    "demo_minutes": 30
+  },
+  {
+    "demo_slug": "arjun-pillay",
+    "is_demo": true,
+    "display_name": "Arjun Pillay",
+    "gender": "male",
+    "subjects": [
+      "Computer Science / Programming",
+      "AI & Machine Learning"
+    ],
+    "subject_other": "",
+    "grades": [
+      "School (K–12)",
+      "Undergraduate"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Creole"
+    ],
+    "language_other": "",
+    "hourly_rate": 700,
+    "availability": [
+      "Monday evening",
+      "Wednesday evening",
+      "Sunday morning"
+    ],
+    "delivery_modes": [
+      "Online"
+    ],
+    "formats": [
+      "1-on-1",
+      "Group class"
+    ],
+    "teaching_style": "Practice problems",
+    "qualification": "M.Sc. Artificial Intelligence",
+    "certificate_details": "",
+    "experience_years": 4,
+    "bio": "Fictional demo profile. Project-based support for Python, data structures, and introductory machine learning.",
+    "photo_url": "",
+    "offers_demo": true,
+    "demo_price": 0,
+    "demo_minutes": 30
+  },
+  {
+    "demo_slug": "sarah-perrin",
+    "is_demo": true,
+    "display_name": "Sarah Perrin",
+    "gender": "female",
+    "subjects": [
+      "English",
+      "French"
+    ],
+    "subject_other": "",
+    "grades": [
+      "School (K–12)",
+      "Undergraduate"
+    ],
+    "languages": [
+      "English",
+      "French",
+      "Creole"
+    ],
+    "language_other": "",
+    "hourly_rate": 400,
+    "availability": [
+      "Monday evening",
+      "Wednesday afternoon"
+    ],
+    "delivery_modes": [
+      "Online"
+    ],
+    "formats": [
+      "1-on-1",
+      "Group class"
+    ],
+    "teaching_style": "Discussion and questions",
+    "qualification": "B.A. Languages and Education",
+    "certificate_details": "",
+    "experience_years": 5,
+    "bio": "Fictional demo profile. Conversation, grammar, and writing practice with constructive feedback.",
+    "photo_url": "",
+    "offers_demo": true,
+    "demo_price": 0,
+    "demo_minutes": 30
+  },
+  {
+    "demo_slug": "meera-krishnan",
+    "is_demo": true,
+    "display_name": "Meera Krishnan",
+    "gender": "female",
+    "subjects": [
+      "Mathematics",
+      "Physics"
+    ],
+    "subject_other": "",
+    "grades": [
+      "School (K–12)",
+      "Undergraduate"
+    ],
+    "languages": [
+      "English",
+      "Tamil",
+      "Hindi"
+    ],
+    "language_other": "",
+    "hourly_rate": 500,
+    "availability": [
+      "Tuesday morning",
+      "Saturday evening"
+    ],
+    "delivery_modes": [
+      "Online"
+    ],
+    "formats": [
+      "1-on-1",
+      "Group class"
+    ],
+    "teaching_style": "Discussion and questions",
+    "qualification": "B.Ed. Science Education",
+    "certificate_details": "",
+    "experience_years": 7,
+    "bio": "Fictional demo profile. School science and mathematics lessons paced around each learner’s questions.",
+    "photo_url": "",
+    "offers_demo": true,
+    "demo_price": 0,
+    "demo_minutes": 30
+  }
+]

@@ -693,6 +693,9 @@ def feedback():
         abort(400, "Choose a rating from 1 to 5.")
     respondent_id = session.get("respondent_id")
     with db() as connection:
+        profile_row = connection.execute("SELECT profile_json FROM profiles WHERE user_id=?", (tutor_id,)).fetchone()
+        if profile_row and json.loads(profile_row["profile_json"]).get("is_demo"):
+            abort(400, "Demo profiles are excluded from training feedback.")
         shown = connection.execute(
             "SELECT 1 FROM shown_matches WHERE request_id=? AND tutor_id=? AND respondent_id=?",
             (request_id, tutor_id, respondent_id),

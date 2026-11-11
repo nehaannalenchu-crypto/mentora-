@@ -46,66 +46,69 @@ def rank_tutors(
     tutors: list[dict[str, Any]],
     model_bundle: dict[str, Any] | None,
 ) -> list[dict[str, Any]]:
-    """Filter essential constraints, then rank by match features."""
-    ranked: list[dict[str, Any]] = []
-    student_subjects = set(student.get("subjects", []))
-    student_level = student.get("study_level", "")
-    student_gender = student.get("teacher_gender", "any")
-    student_formats = set(student.get("formats", []))
-    student_modes = set(student.get("delivery_modes", []))
+    """Rank approved profiles by closeness; preferences are not exclusion rules."""
+    ranked = []
+    requested_subjects = set(student.get("subjects", [])) - {"Other"}
+    level = student.get("study_level", "")
+    gender = student.get("teacher_gender", "any")
     budget = float(student.get("budget_max", 0) or 0)
-    student_slots = set(student.get("availability", []))
-
+    slots = set(student.get("availability", []))
+    formats = set(student.get("formats", []))
+    modes = set(student.get("delivery_modes", []))
     for tutor in tutors:
-        tutor_subjects = set(tutor.get("subjects", []))
-        tutor_levels = set(tutor.get("grades", []))
-        tutor_formats = set(tutor.get("formats", []))
-        tutor_modes = set(tutor.get("delivery_modes", []))
-        tutor_slots = set(tutor.get("availability", []))
-        tutor_rate = float(tutor.get("hourly_rate", 0) or 0)
-        tutor_gender = tutor.get("gender", "")
-
-        if not student_subjects.intersection(tutor_subjects):
-            continue
-        if budget and tutor_rate > budget:
-            continue
-        if student_level and tutor_levels and student_level not in tutor_levels:
-            continue
-        if student_gender in {"female", "male"} and tutor_gender in {"female", "male"} and tutor_gender != student_gender:
-            continue
-        if student_slots and not student_slots.intersection(tutor_slots):
-            continue
-        if student_formats and tutor_formats and not student_formats.intersection(tutor_formats):
-            continue
-        if student_modes and tutor_modes and not student_modes.intersection(tutor_modes):
-            continue
-
         features = build_pair_features(student, tutor)
+        covered = requested_subjects & set(tutor.get("subjects", []))
+        features["subject_match"] = len(covered) / len(requested_subjects) if requested_subjects else 1.0
+        if not slots:
+            features["availability_overlap"] = 1.0
+        rate = float(tutor.get("hourly_rate", 0) or 0)
+        level_fit = not level or level in tutor.get("grades", [])
+        gender_fit = gender == "any" or gender == tutor.get("gender")
+        format_fit = not formats or bool(formats & set(tutor.get("formats", [])))
+        mode_fit = not modes or bool(modes & set(tutor.get("delivery_modes", [])))
+        budget_fit = min(1.0, budget / rate) if budget and rate else 1.0
+        preference_score = (
+            .35 * features["subject_match"] + .20 * features["availability_overlap"]
+            + .10 * features["language_match"] + .10 * features["teaching_style_match"]
+            + .07 * level_fit + .08 * budget_fit + .04 * gender_fit
+            + .03 * format_fit + .03 * mode_fit
+        )
+        score, mode = preference_score, "baseline"
         if model_bundle:
             columns = model_bundle.get("feature_columns", FEATURE_COLUMNS)
             row = pd.DataFrame([[features[column] for column in columns]], columns=columns)
-            score = float(model_bundle["model"].predict_proba(row)[0][1])
-            mode = "model"
-        else:
-            # Transparent cold-start score; feedback is needed before ML training.
-            score = (
-                0.35 * features["subject_match"]
-                + 0.30 * features["availability_overlap"]
-                + 0.20 * features["language_match"]
-                + 0.15 * features["teaching_style_match"]
-            )
-            mode = "baseline"
-
-        reasons = ["Subject and level fit"]
-        if features["availability_overlap"] > 0:
-            reasons.append("Available at a time you selected")
+            prediction = float(model_bundle["model"].predict_proba(row)[0][1])
+            score, mode = .7 * prediction + .3 * preference_score, "model"
+        reasons, tradeoffs = [], []
+        if covered:
+            reasons.append("Teaches " + ", ".join(sorted(covered)))
+        if requested_subjects - covered:
+            tradeoffs.append("Does not list " + ", ".join(sorted(requested_subjects - covered)))
+        overlap = slots & set(tutor.get("availability", []))
+        if slots and overlap:
+            reasons.append(f"{len(overlap)} of {len(slots)} preferred time slots overlap")
+        elif slots:
+            tradeoffs.append("No shared time slots; ask about another time")
+        if budget and rate > budget:
+            tradeoffs.append(f"MUR {rate - budget:,.0f}/hour above your budget")
+        elif budget:
+            reasons.append("Within your budget")
+        if not level_fit:
+            tradeoffs.append("Your study level is not listed")
+        if not gender_fit:
+            tradeoffs.append("Different from your teacher gender preference")
         if features["language_match"]:
             reasons.append("Language preference fits")
+        else:
+            tradeoffs.append("No preferred language listed")
         if features["teaching_style_match"]:
             reasons.append("Learning style fits")
-        if budget:
-            reasons.append("Within your budget")
-        ranked.append({**tutor, "features": features, "score": score, "scoring_mode": mode, "reasons": reasons})
-
+        if not format_fit:
+            tradeoffs.append("Different class format")
+        if not mode_fit:
+            tradeoffs.append("Different delivery mode")
+        ranked.append({**tutor, "features": features, "score": score,
+                       "scoring_mode": mode, "reasons": reasons, "tradeoffs": tradeoffs,
+                       "availability_matches": bool(overlap) if slots else True})
     ranked.sort(key=lambda item: item["score"], reverse=True)
     return ranked
