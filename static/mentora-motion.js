@@ -1,5 +1,11 @@
 (() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('[data-motion-toggle]').forEach(button => button.addEventListener('click', () => {
+    const canvas = button.closest('.home-canvas');
+    const paused = canvas.classList.toggle('motion-paused');
+    button.setAttribute('aria-pressed', String(paused));
+    button.innerHTML = paused ? '<span aria-hidden="true">▶</span> Play animation' : '<span aria-hidden="true">Ⅱ</span> Pause animation';
+  }));
   const cards = document.querySelectorAll('[data-reveal]');
   if (!reduced && 'IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {

@@ -1,13 +1,26 @@
 {% extends "base.html" %}
 {% block title %}Join Mentora{% endblock %}
 {% block content %}
+<div class="home-canvas">
+  <div class="home-wash wash-mint" aria-hidden="true"></div><div class="home-wash wash-yellow" aria-hidden="true"></div>
 <section class="auth-page wrap" id="sign-in">
   <div class="auth-promo">
     <p class="eyebrow"><span>✳</span> PERSONALIZED ONLINE TUTORING</p>
     <h1>Learn from the right tutor,<br><em>your way.</em></h1>
     <p class="lead">Find support that fits your subjects, schedule, budget, and goals.</p>
     <div class="benefit-row"><span>▣ <b>1-on-1 or group classes</b></span><span>▦ <b>Flexible scheduling</b></span><span>✓ <b>Reviewed tutor profiles</b></span></div>
-    <div class="auth-student-art"><img src="{{ url_for('static', filename='images/mentora-students.png') }}" alt="Friendly illustrated students learning together" width="600" height="400"><span class="floating-sticker sticker-hello"><span class="wave-hand">👋</span> Your next chapter starts here</span><span class="floating-sticker sticker-bulb" aria-hidden="true">💡</span></div>
+    <div class="auth-student-art home-learning-scene">
+      <span class="sunny-spinner" aria-hidden="true"><span>✹</span></span>
+      <span class="scene-cloud cloud-one" aria-hidden="true"></span><span class="scene-cloud cloud-two" aria-hidden="true"></span>
+      <img src="{{ url_for('static', filename='images/mentora-students.png') }}" alt="Friendly illustrated students learning together" width="600" height="400">
+      <span class="floating-sticker sticker-hello"><span class="wave-hand">👋</span> Your next chapter starts here</span>
+      <span class="floating-sticker sticker-bulb" aria-hidden="true">💡</span>
+      <span class="scene-pencil" aria-hidden="true">✏️</span>
+      <span class="scene-planet" aria-hidden="true">✦</span>
+      <div class="animated-book" aria-hidden="true"><span class="book-cover"></span><span class="book-page page-left"></span><span class="book-page page-right"></span><span class="book-page page-turn"></span><i></i></div>
+      <span class="scene-caption"><span class="growing-dot"></span> A little curiosity goes a long way.</span>
+    </div>
+    <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false"><span aria-hidden="true">Ⅱ</span> Pause animation</button>
   </div>
   <section class="auth-card" aria-labelledby="auth-title">
     <div class="auth-card-icon">M</div>
@@ -41,4 +54,5 @@
   </section>
 </section>
 <section class="auth-trust wrap"><span>01 <b>Personalized matches</b></span><span>02 <b>Chat and book in one place</b></span><span>03 <b>Demo classes available</b></span></section>
+</div>
 {% endblock %}
