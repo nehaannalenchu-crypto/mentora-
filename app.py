@@ -723,6 +723,8 @@ def save_tutor(teacher_id: int):
             connection.execute("DELETE FROM saved_tutors WHERE student_id=? AND teacher_id=?", (g.user["id"], teacher_id))
         else:
             connection.execute("INSERT INTO saved_tutors(student_id,teacher_id,created_at) VALUES(?,?,?)", (g.user["id"], teacher_id, now_iso()))
+    if request.accept_mimetypes.best == "application/json":
+        return {"saved": not bool(saved)}
     flash("Saved tutors updated.", "success")
     return redirect(request.referrer or url_for("tutor_matches"))
 
