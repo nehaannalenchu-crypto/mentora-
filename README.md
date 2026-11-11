@@ -13,7 +13,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Open <http://127.0.0.1:5001>. The local SQLite database is created under `instance/` and excluded from Git.
+Open <http://127.0.0.1:5001>. The local SQLite database is created under `instance/` and excluded from Git. For a Google Cloud Run classroom demo, the `Procfile` configures Gunicorn; the SQLite database remains temporary and is not suitable for persistent multi-user hosting.
 
 ## Main flow
 
