@@ -9,3 +9,6 @@ data/collected_ratings.csv
 outputs/
 work/
 .codex-finalizer/
+
+# This checked-in artifact contains only simulated training data.
+!models/matcher.joblib

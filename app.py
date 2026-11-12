@@ -7,11 +7,13 @@ import os
 import secrets
 import smtplib
 import sqlite3
+from contextlib import contextmanager
 from datetime import date, datetime, timedelta, timezone
 from email.message import EmailMessage
 from functools import wraps
 from pathlib import Path
 from uuid import uuid4
+from typing import Iterator
 
 from flask import (
     Flask, abort, flash, g, redirect, render_template, request, session,
@@ -53,11 +55,16 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 
-def db() -> sqlite3.Connection:
+@contextmanager
+def db() -> Iterator[sqlite3.Connection]:
     DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
     connection = sqlite3.connect(DATABASE_PATH)
     connection.row_factory = sqlite3.Row
-    return connection
+    try:
+        with connection:
+            yield connection
+    finally:
+        connection.close()
 
 
 def init_db() -> None:
@@ -138,6 +145,10 @@ def init_db() -> None:
                 created_at TEXT NOT NULL,
                 PRIMARY KEY(blocker_id, blocked_id)
             );
+            CREATE TABLE IF NOT EXISTS match_respondents (
+                user_id INTEGER PRIMARY KEY REFERENCES users(id),
+                respondent_id TEXT NOT NULL UNIQUE
+            );
             CREATE TABLE IF NOT EXISTS match_requests (
                 request_id TEXT PRIMARY KEY,
                 respondent_id TEXT NOT NULL,
@@ -156,11 +167,15 @@ def init_db() -> None:
                 tutor_id TEXT NOT NULL,
                 rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
                 good_fit INTEGER,
+                training_consent INTEGER NOT NULL DEFAULT 0,
                 created_at TEXT NOT NULL,
                 PRIMARY KEY (request_id, tutor_id)
             );
             """
         )
+        feedback_columns = {row[1] for row in connection.execute("PRAGMA table_info(feedback)")}
+        if "training_consent" not in feedback_columns:
+            connection.execute("ALTER TABLE feedback ADD COLUMN training_consent INTEGER NOT NULL DEFAULT 0")
 
 
 def now_iso() -> str:
@@ -171,6 +186,13 @@ def get_profile(user_id: int) -> dict:
     with db() as connection:
         row = connection.execute("SELECT profile_json FROM profiles WHERE user_id=?", (user_id,)).fetchone()
     return json.loads(row["profile_json"]) if row else {}
+
+
+def get_respondent_id(user_id: int) -> str:
+    # Stable random ID prevents one student leaking across grouped data splits.
+    with db() as connection:
+        connection.execute("INSERT OR IGNORE INTO match_respondents(user_id,respondent_id) VALUES(?,?)", (user_id, uuid4().hex))
+        return connection.execute("SELECT respondent_id FROM match_respondents WHERE user_id=?", (user_id,)).fetchone()[0]
 
 
 def notify(user_id: int, title: str, body: str) -> None:
@@ -253,10 +275,12 @@ def shared_page_data():
             if row:
                 current = dict(row)
                 unread = connection.execute("SELECT COUNT(*) FROM notifications WHERE user_id=? AND is_read=0", (row["id"],)).fetchone()[0]
+    model_bundle = load_trained_model()
     return {
         "current_user": current,
         "notification_count": unread,
-        "model_ready": load_trained_model() is not None,
+        "model_ready": model_bundle is not None,
+        "model_source": model_bundle.get("training_source") if model_bundle else None,
         "demo_mode": not all(os.environ.get(name) for name in ("MENTORA_SMTP_HOST", "MENTORA_SMTP_USERNAME", "MENTORA_SMTP_PASSWORD")),
     }
 
@@ -339,7 +363,7 @@ def auth_verify():
             role = requested_role
     session.clear()
     session["user_id"] = user_id
-    session["respondent_id"] = uuid4().hex
+    session["respondent_id"] = get_respondent_id(user_id)
     if role == "admin":
         return redirect(url_for("admin_dashboard"))
     with db() as connection:
@@ -642,7 +666,8 @@ def tutor_matches():
         item["saved"] = int(item["id"]) in saved_ids
     request_id = None
     if ranked:
-        respondent_id = session.setdefault("respondent_id", uuid4().hex)
+        respondent_id = get_respondent_id(g.user["id"])
+        session["respondent_id"] = respondent_id
         request_id = uuid4().hex
         timestamp = now_iso()
         with db() as connection:
@@ -683,6 +708,9 @@ def tutor_detail(teacher_id: int):
 @app.post("/feedback")
 @require_role("student")
 def feedback():
+    if request.form.get("training_consent") != "1":
+        flash("Please agree before using a rating to improve matching.", "info")
+        return redirect(url_for("tutor_matches"))
     request_id = request.form.get("request_id", "")
     tutor_id = request.form.get("tutor_id", "")
     try:
@@ -704,8 +732,8 @@ def feedback():
             abort(400, "That tutor was not part of this match list.")
         good_fit = 1 if rating >= 4 else 0 if rating <= 2 else None
         connection.execute(
-            "INSERT OR REPLACE INTO feedback(request_id,respondent_id,tutor_id,rating,good_fit,created_at) VALUES(?,?,?,?,?,?)",
-            (request_id, respondent_id, tutor_id, rating, good_fit, now_iso()),
+            "INSERT OR REPLACE INTO feedback(request_id,respondent_id,tutor_id,rating,good_fit,training_consent,created_at) VALUES(?,?,?,?,?,?,?)",
+            (request_id, respondent_id, tutor_id, rating, good_fit, 1, now_iso()),
         )
     flash("Thanks for rating the recommendation.", "success")
     return redirect(url_for("tutor_matches"))
@@ -1016,6 +1044,12 @@ def close_report(report_id: int):
         connection.execute("UPDATE reports SET status='reviewed' WHERE id=?", (report_id,))
     flash("Report marked reviewed.", "success")
     return redirect(url_for("admin_dashboard"))
+
+
+@app.get("/matching-method")
+def matching_method():
+    bundle = load_trained_model()
+    return render_template("model.html", report=bundle.get("evaluation") if bundle else None)
 
 
 @app.get("/about")

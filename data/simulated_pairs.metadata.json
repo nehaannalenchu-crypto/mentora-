@@ -1,0 +1,9 @@
+{
+  "source": "simulated",
+  "seed": 42,
+  "students": 600,
+  "pairs": 7200,
+  "tutor_profiles": 48,
+  "label_definition": "Bernoulli samples from an invented preference utility; no human ratings.",
+  "limitation": "Evaluation measures recovery of this artificial pattern, not real matching quality."
+}

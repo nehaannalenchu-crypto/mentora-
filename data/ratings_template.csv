@@ -1,1 +1,1 @@
-respondent_id,subject_match,availability_overlap,language_match,teaching_style_match,good_fit
+respondent_id,tutor_id,subject_match,availability_overlap,language_match,teaching_style_match,level_match,budget_fit,gender_preference_match,class_format_match,delivery_mode_match,good_fit,label_source
